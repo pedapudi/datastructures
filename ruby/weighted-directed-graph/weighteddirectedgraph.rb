@@ -67,7 +67,7 @@ class WeightedDirectedGraph
   # return
   #    last Vertex to be touched
   def explore(start)
-    @reset_visits
+    self.reset_visits
     start.visited = true 
     start.out_edges.each do |edge|
       edge.dest.visited ? @cycle = true : explore(edge.dest)
@@ -124,7 +124,7 @@ class Vertex
   
   # returns the total degree of this vertex
   def degree
-    @in_degree + @out_degree
+    self.in_degree + self.out_degree
   end
   
   # returns the nodes that are immediately
