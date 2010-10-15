@@ -86,13 +86,15 @@ class DisjointSet
   def union(operand)
     root_s = self.find
     root_op = operand.find
-    if root_s == root_op
-      root_op.parent = root_s
-      root_s.rank += 1
-    elsif root_s > root_op 
-      root_op.parent = root_s
-    else
-      root_s = root_op
+    if !root_s.eql?(root_op)
+      if root_s == root_op
+        root_op.parent = root_s
+        root_s.rank += 1
+      elsif root_s > root_op 
+        root_op.parent = root_s
+      else
+        root_s.parent = root_op
+      end
     end
   end
 end
