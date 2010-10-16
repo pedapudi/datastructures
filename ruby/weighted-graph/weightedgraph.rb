@@ -8,6 +8,8 @@
 # * each node is aware of all the edges leading to it,
 #   all the edges leading out of it, and the value it
 #   represents
+# * good behavior is expected in utilizing the graph
+#   ie. an edge will not include non-existant vertices
 #
 # @author Sunil Pedapudi
 # @date 10152010
@@ -46,6 +48,8 @@ class WeightedDirectedGraph
   # return
   #    Edge object that is created
   def add_edge(src, dest, weight)
+    @v << src if !@v.include?(src)
+    @v << dest if !@v.include?(dest)
     new_edge = Edge.new(src,dest, weight)
     src.out_edges << new_edge
     dest.in_edges << new_edge
