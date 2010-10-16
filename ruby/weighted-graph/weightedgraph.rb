@@ -84,12 +84,26 @@ end
 # the following definition of an edge is defined by
 # a source, destination, and weight
 class Edge
+  include Comparable
   attr_accessor :src, :dest, :weight
   
   def initialize(source, destination, weight)
     @src = source
     @dest = destination
     @weight = weight
+  end
+  
+  # edges are compared to one another by their
+  # weights
+  # args
+  #    otherEdge: Edge object against which this
+  #    edge will be compared to
+  # return
+  #    1: if this edge's weight is greater
+  #    0: if this edge's weight is the same
+  #    -1: if this edge's weight is less
+  def <=>(otherEdge)
+    @weight <=> otherEdge.weight
   end
 end
 
@@ -146,5 +160,32 @@ class Vertex
   # Object is utilized
   def to_s
     @payload ? @payload.to_s : self
+  end
+
+  # simplicity function since payload is an optional
+  # parameter. this returns the actual payload rather
+  # than an object containing the payload if payload
+  # exists
+  def payload
+    @payload[0] if @payload
+  end
+end
+
+# this is a trivial implementation of weighted 
+# undirected graphs utilizing the weighted directed
+# graph implementation. the logical addition is that
+# for every edge added, an edge in the opposite direction
+# is also added. 
+#
+# note that by the weighted directed graph's definition of
+# a cycle, any undirected graph will have a cycle. do not
+# utilize this definition for weighted undirected graphs.
+# also note that the degree of every vertex is twice its
+# actual value.
+
+class WeightedUndirectedGraph < WeightedDirectedGraph
+  def add_edge(src, dest, weight)
+    super(src, dest, weight)
+    super(dest, src, weight)
   end
 end

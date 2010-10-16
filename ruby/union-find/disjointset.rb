@@ -47,7 +47,7 @@ class DisjointSet
   # return
   #    1: if self's rank > compareTo's rank
   #    0: if self's rank == compareTo's rank
-  #   -1: if self's rank < compareTo's rank
+  #    -1: if self's rank < compareTo's rank
   def <=>(compareTo)
     @rank <=> compareTo.rank
   end
@@ -63,6 +63,14 @@ class DisjointSet
   def each(&block)
     block.call(self)
     @parent.each(&block) if !self.parent.eql?(self)
+  end
+
+  # simplicity function since payload is an optional
+  # parameter. this returns the actual payload rather
+  # than an object containing the payload if payload
+  # exists
+  def payload
+    @payload[0] if @payload
   end
 
   # find returns the root parent node of this DisjointSet
