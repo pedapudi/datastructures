@@ -3,8 +3,6 @@
 # * adjacency lists are used for bookkeeping
 # * the set of vertices V, the set of edges E are 
 #   maintained at all times
-# * if dfs is performed, the graph notes whether there
-#   exists a cycle or not
 # * each node is aware of all the edges leading to it,
 #   all the edges leading out of it, and the value it
 #   represents
@@ -15,12 +13,11 @@
 # @date 10152010
 
 class WeightedDirectedGraph
-  attr_accessor :v, :e, :cycle
+  attr_accessor :v, :e
  
   def initialize
     @v = []
     @e = []
-    @cycle = false
   end
 
   # a vertex is added with a specific payload
@@ -56,12 +53,18 @@ class WeightedDirectedGraph
     @e << new_edge
   end
   
-  # reference to whether there was a cycle the last
-  # time it was checked
-  def has_cycle?
-    @cycle
+  # depth-first search of the graph
+  # return
+  #    visited: visited[true] for all
+  #    nodes successfully visited in
+  #    the graph
+  def dfs
+    visited = Hash.new(false)
+    @v.each do |vertex| 
+      visited.merge(explore(vertex)) if !visited[vertex]
+    end
+    return visited
   end
-
   # explore performs one iteration of depth-first 
   # search to touch all the nodes accessible from 
   # a specific starting point. this is useful for
@@ -69,19 +72,15 @@ class WeightedDirectedGraph
   # args
   #    start: starting Vertex 
   # return
-  #    last Vertex to be touched
+  #    visited: all nodes reachable from start, n, are
+  #    indicated by visited[n] = true
   def explore(start)
-    self.reset_visits
-    start.visited = true 
+    visited = Hash.new(false)
+    visited[start] = true 
     start.out_edges.each do |edge|
-      edge.dest.visited ? @cycle = true : explore(edge.dest)
+      explore(edge.dest) if !visited[edge.dest]
     end
-  end
-
-  # resets the bookkeeping variable indicating whether
-  # a Vertex has been touched or not
-  def reset_visits
-    @v.each{|v| v.visited = false}
+    return visited
   end
 end
 
@@ -114,7 +113,7 @@ end
 # the following definition of a vertex abstracts a node
 # in a graph. 
 class Vertex
-  attr_accessor :in_edges, :out_edges, :payload, :visited
+  attr_accessor :in_edges, :out_edges, :payload
   
   # for a more general implementation, the payload is 
   # defined to be an optional parameter, but if a node
@@ -127,7 +126,6 @@ class Vertex
     @in_edges = []
     @out_edges = []
     @payload = payload if payload
-    @visited = false
   end
   
   # returns the in-degree of this vertex
